@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Task Center</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body{
+background:linear-gradient(135deg,#0f172a,#020617);
+color:white;
+font-family:sans-serif;
+}
+</style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen p-4">
+
+<!-- LOGIN -->
+<div id="loginBox"
+class="w-full max-w-md bg-slate-900 p-6 rounded-2xl shadow-xl">
+
+<h1 class="text-xl font-bold text-center mb-6">
+🔐 Đăng nhập hệ thống
+</h1>
+
+<input id="username" placeholder="Tài khoản"
+class="w-full p-3 rounded text-black mb-3">
+
+<input id="password" type="password" placeholder="Mật khẩu"
+class="w-full p-3 rounded text-black mb-4">
+
+<button onclick="login()"
+class="w-full bg-blue-600 py-3 rounded-xl font-bold">
+Đăng nhập
+</button>
+
+<p id="loginError" class="text-red-400 text-center mt-3 hidden">
+Sai tài khoản hoặc mật khẩu
+</p>
+
+</div>
+
+<!-- TASK CENTER -->
+<div id="taskPage"
+class="hidden w-full max-w-md bg-slate-900 p-6 rounded-2xl shadow-xl">
+
+<h1 class="text-2xl font-bold text-center mb-6">
+🚀 Task Center
+</h1>
+
+<select id="platform"
+class="w-full p-3 rounded text-black mb-4">
+<option value="traffic">Traffic68</option>
+<option value="link4m">Link4M</option>
+</select>
+
+<button onclick="createTask()"
+class="w-full bg-blue-600 py-3 rounded-xl font-bold mb-4">
+Nhận nhiệm vụ
+</button>
+
+<div id="taskBox" class="hidden">
+
+<p class="mb-2 text-center text-green-400">
+✅ Nhiệm vụ đã tạo
+</p>
+
+<input id="taskLink"
+class="w-full p-2 rounded text-black mb-3"
+readonly>
+
+<button onclick="copyLink()"
+class="w-full bg-green-600 py-3 rounded-lg">
+📋 Copy Link
+</button>
+
+</div>
+
+<button onclick="logout()"
+class="w-full mt-4 bg-red-600 py-2 rounded-lg">
+Đăng xuất
+</button>
+
+</div>
+
+<script>
+
+/* =========================
+   ADMIN ACCOUNTS
+========================= */
+
+const accounts = [
+{user:"phamquangan",pass:"phamquangan2512"},
+{user:"duyvan",pass:"9999"}
+];
+
+
+/* =========================
+   LOGIN SYSTEM
+========================= */
+
+function login(){
+
+let u=document.getElementById("username").value;
+let p=document.getElementById("password").value;
+
+let valid=accounts.find(acc=>acc.user===u && acc.pass===p);
+
+if(valid){
+
+localStorage.setItem("logged","true");
+
+document.getElementById("loginBox").classList.add("hidden");
+document.getElementById("taskPage").classList.remove("hidden");
+
+}else{
+document.getElementById("loginError").classList.remove("hidden");
+}
+
+}
+
+function logout(){
+localStorage.removeItem("logged");
+location.reload();
+}
+
+/* tự login nếu đã đăng nhập */
+if(localStorage.getItem("logged")==="true"){
+document.getElementById("loginBox").style.display="none";
+document.getElementById("taskPage").style.display="block";
+}
+
+/* =========================
+   TASK SYSTEM
+========================= */
+
+const trafficAPI =
+"https://traffic68.com/api/quicklink/st?api=tf68_9b7f8909d6cc0fd3110969a27a1b784e84199d1893865c07&url=";
+
+const link4mAPI =
+"https://link4m.co/st?api=68a498c9a8b820353038b288&url=";
+
+const jobs=[
+"https://www.youtube.com/watch?v=9j7KQVUvKD8&t=370s",
+"https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+"https://www.youtube.com/watch?v=ysz5S6PUM-U",
+"https://www.youtube.com/watch?v=jNQXAC9IVRw"
+];
+
+function randomJob(){
+return jobs[Math.floor(Math.random()*jobs.length)];
+}
+
+function createTask(){
+
+let platform=document.getElementById("platform").value;
+let job=randomJob();
+let finalLink="";
+
+if(platform==="traffic"){
+finalLink=trafficAPI+encodeURIComponent(job);
+}else{
+finalLink=link4mAPI+encodeURIComponent(job);
+}
+
+document.getElementById("taskLink").value=finalLink;
+document.getElementById("taskBox").classList.remove("hidden");
+
+}
+
+function copyLink(){
+navigator.clipboard.writeText(
+document.getElementById("taskLink").value
+);
+alert("Đã copy link!");
+}
+
+</script>
+
+</body>
+</html>
